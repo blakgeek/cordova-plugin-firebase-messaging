@@ -43,7 +43,7 @@
             <activity android:exported="true" android:name="com.gae.scaffolder.plugin.FCMPluginActivity"
                       android:launchMode="singleTop">
                 <intent-filter>
-                    <action android:name="FCM_PLUGIN_ACTIVITY"/>
+                    <action android:name="FCM_NOTIFICATION_HANDLER"/>
                     <category android:name="android.intent.category.DEFAULT"/>
                 </intent-filter>
             </activity>

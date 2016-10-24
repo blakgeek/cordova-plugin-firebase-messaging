@@ -8,6 +8,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
 import java.util.Map;
 import java.util.HashMap;
 
@@ -29,28 +30,40 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     // [START receive_message]
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // TODO(developer): Handle FCM messages here.
-        // If the application is in the foreground handle both data and notification messages here.
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
+
         Log.d(TAG, "==> MyFirebaseMessagingService onMessageReceived");
-		
-		if( remoteMessage.getNotification() != null){
-			Log.d(TAG, "\tNotification Title: " + remoteMessage.getNotification().getTitle());
-			Log.d(TAG, "\tNotification Message: " + remoteMessage.getNotification().getBody());
-		}
-		
-		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("wasTapped", false);
-		for (String key : remoteMessage.getData().keySet()) {
-                Object value = remoteMessage.getData().get(key);
-                Log.d(TAG, "\tKey: " + key + " Value: " + value);
-				data.put(key, value);
+        String title = null;
+        String message = null;
+        RemoteMessage.Notification notification = remoteMessage.getNotification();
+
+        if (notification != null) {
+            title = notification.getTitle();
+            message = notification.getBody();
         }
-		
-		Log.d(TAG, "\tNotification Data: " + data.toString());
-        FCMPlugin.sendPushPayload( data );
-        //sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody(), remoteMessage.getData());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("$fcmp:foreground", FCMPlugin.isInForeground() ? "1" : "0");
+        data.put("$fcmp:active", FCMPlugin.isActive() ? "1" : "0");
+        for (String key : remoteMessage.getData().keySet()) {
+            String value = remoteMessage.getData().get(key);
+            Log.d(TAG, "\tKey: " + key + " Value: " + value);
+            data.put(key, value);
+            if (title == null && "title".equalsIgnoreCase(key)) {
+                title = value;
+            }
+
+            if (message == null && "body".equalsIgnoreCase(key)) {
+                message = value;
+            }
+        }
+
+        Log.d(TAG, "\tNotification Data: " + data.toString());
+
+        if(FCMPlugin.isInForeground()) {
+            FCMPlugin.sendPushPayload(data);
+        } else if(title != null || message != null){
+            sendNotification(title, message, data);
+        }
     }
     // [END receive_message]
 
@@ -62,13 +75,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(String title, String messageBody, Map<String, Object> data) {
         Intent intent = new Intent(this, FCMPluginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		for (String key : data.keySet()) {
-			intent.putExtra(key, data.get(key).toString());
-		}
+        for (String key : data.keySet()) {
+            intent.putExtra(key, data.get(key).toString());
+        }
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(getApplicationInfo().icon)
                 .setContentTitle(title)

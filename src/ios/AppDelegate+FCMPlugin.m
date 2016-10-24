@@ -73,7 +73,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
     
 	//USER NOT TAPPED NOTIFICATION
     if (application.applicationState == UIApplicationStateActive) {
-        [userInfoMutable setValue:@(NO) forKey:@"wasTapped"];
+        [userInfoMutable setValue:@"1" forKey:@"$fcmp:foreground"];
         NSLog(@"app active");
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userInfoMutable
                                                            options:0
@@ -81,7 +81,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
         [FCMPlugin.fcmPlugin notifyOfMessage:jsonData];
     // app is in background or in stand by (NOTIFICATION WILL BE TAPPED)
     }else{
-        [userInfoMutable setValue:@(YES) forKey:@"wasTapped"];
+        [userInfoMutable setValue:@"0" forKey:@"$fcmp:foreground"];
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:userInfoMutable
                                                            options:0
                                                              error:&error];
