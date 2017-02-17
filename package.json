@@ -1,23 +1,26 @@
 {
-  "version": "1.3.0",
-  "name": "cordova-plugin-fcm",
-  "cordova_name": "Cordova FCM Push Plugin",
-  "description": "Google Firebase Cloud Messaging Cordova Push Plugin",
+  "version": "1.2.0",
+  "name": "cordova-plugin-fireabase-messaging",
+  "cordova_name": "Cordova Firebase Messaging Plugin",
+  "description": "Adds support for Firebase Cloud Messaging to your Cordova app",
   "license": "MIT",
-  "repo": "",
-  "issue": "",
   "author": {
-    "name": "Felipe Echanique Torres"
+    "name": "Carlos \"blakgeek\" Lawton"
   },
+  "contributes": [{
+    "name": "Felipe Echanique Torres"
+  }],
   "repository": {
     "type": "git",
-    "url": "https://github.com/fechanique/cordova-plugin-fcm"
+    "url": "https://github.com/blakgeek/cordova-plugin-firebase-messaging"
   },
   "keywords": [
     "ecosystem:cordova",
     "cordova-android",
     "cordova-ios",
     "notifications",
+    "cloud",
+    "messaging",
     "push",
     "firebase",
     "fcm",
@@ -29,6 +32,10 @@
     "android",
     "ios"
   ],
-  "engines": [],
-  "englishdoc": ""
+  "scripts": {
+    "postversion": "node scripts/sync-plugin-version.js; git add plugin.xml; git commit plugin.xml -m \"v${npm_package_version}\""
+  },
+  "devDependencies": {
+    "libxmljs": "^0.18.4"
+  }
 }

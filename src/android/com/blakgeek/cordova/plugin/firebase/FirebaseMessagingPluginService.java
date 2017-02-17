@@ -1,4 +1,4 @@
-package com.gae.scaffolder.plugin;
+package com.blakgeek.cordova.plugin.firebase;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,18 +9,18 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Felipe Echanique on 08/06/2016.
  */
-public class MyFirebaseMessagingService extends FirebaseMessagingService {
+public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
-    private static final String TAG = "FCMPlugin";
+    private static final String TAG = "FirebaseMessagingPlugin";
 
     /**
      * Called when message is received.
@@ -42,8 +42,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("$fcmp:foreground", FCMPlugin.isInForeground() ? "1" : "0");
-        data.put("$fcmp:active", FCMPlugin.isActive() ? "1" : "0");
+        if(!FirebaseMessagingPlugin.isActive()) {
+            data.put("$appState", 2);
+        } else if(FirebaseMessagingPlugin.isInForeground()) {
+            data.put("$appState", 0);
+        } else {
+            data.put("$appState", 1);
+        }
+
         for (String key : remoteMessage.getData().keySet()) {
             String value = remoteMessage.getData().get(key);
             Log.d(TAG, "\tKey: " + key + " Value: " + value);
@@ -59,8 +65,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Log.d(TAG, "\tNotification Data: " + data.toString());
 
-        if(FCMPlugin.isInForeground()) {
-            FCMPlugin.sendPushPayload(data);
+        if(FirebaseMessagingPlugin.isInForeground()) {
+            FirebaseMessagingPlugin.sendPushPayload(data);
         } else if(title != null || message != null){
             sendNotification(title, message, data);
         }
@@ -73,7 +79,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String title, String messageBody, Map<String, Object> data) {
-        Intent intent = new Intent(this, FCMPluginActivity.class);
+        Intent intent = new Intent(this, FirebaseMessagingPluginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         for (String key : data.keySet()) {
             intent.putExtra(key, data.get(key).toString());

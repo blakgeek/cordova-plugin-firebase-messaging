@@ -18,74 +18,75 @@
   under the License.
 -->
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="cordova-plugin-fcm"
+        id="cordova-plugin-firebase-messaging"
         version="1.2.0">
-    <name>FCMPlugin</name>
-    <description>Cordova FCM Plugin</description>
+    <name>FirebaseMessagingPlugin</name>
+    <description>Adds support for Firebase Cloud Messaging to your Cordova/PhoneGap apps.</description>
     <license>Apache 2.0</license>
-    <keywords>cordova, fcm, push, plugin</keywords>
+    <keywords>cordova, fcm, push, plugin, cloub, messaging, notification</keywords>
+    <databaseor>Carlos "blakgeek" Lawton</databaseor>
+    <repo>https://github.com/blakgeek/cordova-plugin-firebase-messaging.git</repo>
+    <issue>https://github.com/blakgeek/cordova-plugin-firebase-messaging/issues</issue>
 
-    <info>Cordova FCM plugin</info>
-
-    <js-module src="www/FCMPlugin.js" name="FCMPlugin">
-        <clobbers target="FCMPlugin"/>
+    <js-module src="www/FirebaseMessagingPlugin.js" name="FirebaseMessagingPlugin">
+        <clobbers target="FirebaseMessagingPlugin"/>
     </js-module>
 
     <engines>
         <engine name="cordova-android" version=">=4.0.0"/>
     </engines>
 
-    <dependency id="cordova-plugin-cocoapod-support"/>
+    <dependency id="cordova-plugin-firebase-core" url="https://github.com/blakgeek/cordova-plugin-firebase-core"/>
+
+    <preference name="HANDLER_ACTION" default="FCM_NOTIFICATION_HANDLER"/>
 
     <!-- ANDROID CONFIGURATION -->
     <platform name="android">
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:exported="true" android:name="com.gae.scaffolder.plugin.FCMPluginActivity"
+            <activity android:exported="true" android:name="com.blakgeek.cordova.plugin.firebase.FirebaseMessagingPluginActivity"
                       android:launchMode="singleTop">
                 <intent-filter>
-                    <action android:name="FCM_NOTIFICATION_HANDLER"/>
+                    <action android:name="$HANDLER_ACTION"/>
                     <category android:name="android.intent.category.DEFAULT"/>
                 </intent-filter>
             </activity>
-            <service android:name="com.gae.scaffolder.plugin.MyFirebaseMessagingService">
+            <service android:name="com.blakgeek.cordova.plugin.firebase.FirebaseMessagingPluginService">
                 <intent-filter>
                     <action android:name="com.google.firebase.MESSAGING_EVENT"/>
                 </intent-filter>
             </service>
-            <service android:name="com.gae.scaffolder.plugin.MyFirebaseInstanceIDService">
-                <intent-filter>
-                    <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-                </intent-filter>
-            </service>
         </config-file>
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="FCMPlugin">
-                <param name="android-package" value="com.gae.scaffolder.plugin.FCMPlugin"/>
+            <feature name="FirebaseMessagingPlugin">
+                <param name="android-package" value="com.blakgeek.cordova.plugin.firebase.FirebaseMessagingPlugin"/>
                 <param name="onload" value="true"/>
             </feature>
         </config-file>
 
-        <framework src="src/android/FCMPlugin.gradle" custom="true" type="gradleReference"/>
+        <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPlugin.java"
+                     target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
+        <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPluginService.java"
+                     target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
+        <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPluginActivity.java"
+                     target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
+        <framework src="com.google.firebase:firebase-messaging:+" />
+        <framework src="com.google.code.gson:gson:2+" />
 
-        <source-file src="src/android/FCMPlugin.java" target-dir="src/com/gae/scaffolder/plugin"/>
-        <source-file src="src/android/MyFirebaseMessagingService.java" target-dir="src/com/gae/scaffolder/plugin"/>
-        <source-file src="src/android/MyFirebaseInstanceIDService.java" target-dir="src/com/gae/scaffolder/plugin"/>
-        <source-file src="src/android/FCMPluginActivity.java" target-dir="src/com/gae/scaffolder/plugin"/>
-        <framework src="com.google.firebase:firebase-messaging:9.4+" />
+
     </platform>
 
     <!-- IOS CONFIGURATION -->
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
-            <feature name="FCMPlugin">
-                <param name="ios-package" value="FCMPlugin"/>
+            <feature name="FirebaseMessagingPlugin">
+                <param name="ios-package" value="FirebaseMessagingPlugin"/>
             </feature>
         </config-file>
 
-        <header-file src="src/ios/FCMPlugin.h"/>
-        <source-file src="src/ios/FCMPlugin.m"/>
-        <header-file src="src/ios/AppDelegate+FCMPlugin.h"/>
-        <source-file src="src/ios/AppDelegate+FCMPlugin.m"/>
+        <header-file src="src/ios/FirebaseMessagingPlugin.h"/>
+        <source-file src="src/ios/FirebaseMessagingPlugin.m"/>
+        <header-file src="src/ios/AppDelegate+FirebaseMessagingPlugin.h"/>
+        <source-file src="src/ios/AppDelegate+FirebaseMessagingPlugin.m"/>
         <pod id="Firebase/Messaging"/>
 
     </platform>

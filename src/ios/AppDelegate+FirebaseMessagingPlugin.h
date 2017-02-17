@@ -1,5 +1,5 @@
 //
-//  AppDelegate+FCMPlugin.h
+//  AppDelegate+FirebaseMessagingPlugin.h
 //  TestApp
 //
 //  Created by felipe on 12/06/16.
@@ -10,8 +10,8 @@
 #import <UIKit/UIKit.h>
 #import <Cordova/CDVViewController.h>
 
-@interface AppDelegate (FCMPlugin)
+@interface AppDelegate (FirebaseMessagingPlugin)
 
-+ (NSData*)getLastPush;
++ (NSDictionary*)getPendingMessage;
 
 @end

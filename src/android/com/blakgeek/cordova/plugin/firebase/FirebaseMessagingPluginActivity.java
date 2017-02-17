@@ -1,20 +1,17 @@
-package com.gae.scaffolder.plugin;
+package com.blakgeek.cordova.plugin.firebase;
 
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-public class FCMPluginActivity extends Activity {
+public class FirebaseMessagingPluginActivity extends Activity {
     private static String TAG = "FCMPlugin";
 
     /*
@@ -35,7 +32,7 @@ public class FCMPluginActivity extends Activity {
             }
         }
 
-        FCMPlugin.sendPushPayload(data);
+        FirebaseMessagingPlugin.sendPushPayload(data);
 
         finish();
 
