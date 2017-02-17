@@ -17,9 +17,7 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="cordova-plugin-firebase-messaging"
-        version="1.2.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-firebase-messaging" version="1.4.0">
     <name>FirebaseMessagingPlugin</name>
     <description>Adds support for Firebase Cloud Messaging to your Cordova/PhoneGap apps.</description>
     <license>Apache 2.0</license>
@@ -33,7 +31,7 @@
     </js-module>
 
     <engines>
-        <engine name="cordova-android" version=">=4.0.0"/>
+        <engine name="cordova-android" version="&gt;=4.0.0"/>
     </engines>
 
     <dependency id="cordova-plugin-firebase-core" url="https://github.com/blakgeek/cordova-plugin-firebase-core"/>
@@ -43,8 +41,7 @@
     <!-- ANDROID CONFIGURATION -->
     <platform name="android">
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:exported="true" android:name="com.blakgeek.cordova.plugin.firebase.FirebaseMessagingPluginActivity"
-                      android:launchMode="singleTop">
+            <activity android:exported="true" android:name="com.blakgeek.cordova.plugin.firebase.FirebaseMessagingPluginActivity" android:launchMode="singleTop">
                 <intent-filter>
                     <action android:name="$HANDLER_ACTION"/>
                     <category android:name="android.intent.category.DEFAULT"/>
@@ -63,14 +60,11 @@
             </feature>
         </config-file>
 
-        <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPlugin.java"
-                     target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
-        <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPluginService.java"
-                     target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
-        <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPluginActivity.java"
-                     target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
-        <framework src="com.google.firebase:firebase-messaging:+" />
-        <framework src="com.google.code.gson:gson:2+" />
+        <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPlugin.java" target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
+        <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPluginService.java" target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
+        <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPluginActivity.java" target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
+        <framework src="com.google.firebase:firebase-messaging:+"/>
+        <framework src="com.google.code.gson:gson:2+"/>
 
 
     </platform>
