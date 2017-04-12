@@ -1,5 +1,5 @@
 {
-  "version": "1.4.2",
+  "version": "1.4.3",
   "name": "cordova-plugin-fireabase-messaging",
   "cordova_name": "Cordova Firebase Messaging Plugin",
   "description": "Adds support for Firebase Cloud Messaging to your Cordova app",
