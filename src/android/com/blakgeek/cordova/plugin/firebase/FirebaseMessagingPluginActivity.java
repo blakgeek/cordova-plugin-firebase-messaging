@@ -31,6 +31,7 @@ public class FirebaseMessagingPluginActivity extends Activity {
                 data.put(key, getIntent().getExtras().get(key));
             }
         }
+        data.put("$appState", 2);
 
         FirebaseMessagingPlugin.sendPushPayload(data);
 
