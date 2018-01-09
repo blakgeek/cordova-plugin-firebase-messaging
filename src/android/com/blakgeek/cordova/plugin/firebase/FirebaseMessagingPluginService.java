@@ -15,9 +15,8 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Felipe Echanique on 08/06/2016.
- */
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
     private static final String TAG = "FirebaseMessagingPlugin";
@@ -33,42 +32,47 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
         Log.d(TAG, "==> MyFirebaseMessagingService onMessageReceived");
         String title = null;
-        String message = null;
+        String body = null;
         RemoteMessage.Notification notification = remoteMessage.getNotification();
+        Map<String, String> remoteMessageData = remoteMessage.getData();
+        Map<String, Object> data = new HashMap<>();
+        String badge = remoteMessageData.get("badge");
 
         if (notification != null) {
             title = notification.getTitle();
-            message = notification.getBody();
+            body = notification.getBody();
         }
 
-        Map<String, Object> data = new HashMap<>();
-        if(!FirebaseMessagingPlugin.isActive()) {
+        if (!FirebaseMessagingPlugin.isActive()) {
             data.put("$appState", 2);
-        } else if(FirebaseMessagingPlugin.isInForeground()) {
+        } else if (FirebaseMessagingPlugin.isInForeground()) {
             data.put("$appState", 0);
         } else {
             data.put("$appState", 1);
         }
 
-        for (String key : remoteMessage.getData().keySet()) {
-            String value = remoteMessage.getData().get(key);
+        for (String key : remoteMessageData.keySet()) {
+            String value = remoteMessageData.get(key);
             Log.d(TAG, "\tKey: " + key + " Value: " + value);
             data.put(key, value);
-            if (title == null && "title".equalsIgnoreCase(key)) {
-                title = value;
-            }
-
-            if (message == null && "body".equalsIgnoreCase(key)) {
-                message = value;
-            }
         }
 
         Log.d(TAG, "\tNotification Data: " + data.toString());
 
-        if(FirebaseMessagingPlugin.isInForeground()) {
+        if(badge != null && !"".equals(badge.trim())) {
+            // update badge with value
+            try {
+                ShortcutBadger.applyCount(getApplicationContext(), Integer.parseInt(badge));
+            } catch(NumberFormatException nfe) {
+                // skip the badge
+            }
+        }
+
+        if (FirebaseMessagingPlugin.isInForeground()) {
             FirebaseMessagingPlugin.sendPushPayload(data);
-        } else if(title != null || message != null){
-            sendNotification(title, message, data);
+        } else if ((title != null && !"".equals(title.trim())) ||
+                (body != null && !"".equals(body.trim()))) {
+            sendNotification(title, body, data);
         }
     }
     // [END receive_message]
@@ -85,19 +89,19 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
             intent.putExtra(key, data.get(key).toString());
         }
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-            PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-            .setSmallIcon(getApplicationInfo().icon)
-            .setContentTitle(title)
-            .setContentText(messageBody)
-            .setAutoCancel(true)
-            .setSound(defaultSoundUri)
-            .setContentIntent(pendingIntent);
+                .setSmallIcon(getApplicationInfo().icon)
+                .setContentTitle(title)
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
-            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }

@@ -65,6 +65,7 @@
         <source-file src="src/android/com/blakgeek/cordova/plugin/firebase/FirebaseMessagingPluginActivity.java" target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
         <framework src="com.google.firebase:firebase-messaging:+"/>
         <framework src="com.google.code.gson:gson:2+"/>
+        <framework src="me.leolin:ShortcutBadger:1.1.19@aar"/>
 
 
     </platform>
