@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RawRemoteMessage;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.HashMap;
@@ -30,13 +32,15 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        Log.d(TAG, "==> MyFirebaseMessagingService onMessageReceived");
+        Log.d(TAG, "==> onMessageReceived");
         String title = null;
         String body = null;
+        Bundle rawBundle = new RawRemoteMessage(remoteMessage).getRawBundle();
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         Map<String, String> remoteMessageData = remoteMessage.getData();
         Map<String, Object> data = new HashMap<>();
-        String badge = remoteMessageData.get("badge");
+        String notificationBadge = rawBundle.getString("gcm.notification.badge");
+        String dataBadge = rawBundle.getString("badge");
 
         if (notification != null) {
             title = notification.getTitle();
@@ -59,11 +63,18 @@ public class FirebaseMessagingPluginService extends FirebaseMessagingService {
 
         Log.d(TAG, "\tNotification Data: " + data.toString());
 
-        if(badge != null && !"".equals(badge.trim())) {
+        if(notificationBadge != null && !"".equals(notificationBadge.trim())) {
             // update badge with value
             try {
-                ShortcutBadger.applyCount(getApplicationContext(), Integer.parseInt(badge));
+                ShortcutBadger.applyCount(getApplicationContext(), Integer.parseInt(notificationBadge));
             } catch(NumberFormatException nfe) {
+                // skip the badge
+            }
+        } else if(dataBadge != null && !"".equals(dataBadge.trim())) {
+            // update badge with value
+            try {
+                ShortcutBadger.applyCount(getApplicationContext(), Integer.parseInt(dataBadge));
+            } catch (NumberFormatException nfe) {
                 // skip the badge
             }
         }
