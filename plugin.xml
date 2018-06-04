@@ -17,7 +17,7 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-firebase-messaging" version="1.5.1">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-firebase-messaging" version="1.5.2">
     <name>FirebaseMessagingPlugin</name>
     <description>Adds support for Firebase Cloud Messaging to your Cordova/PhoneGap apps.</description>
     <license>Apache 2.0</license>
