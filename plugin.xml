@@ -41,7 +41,7 @@
     <platform name="android">
 
         <preference name="HANDLER_ACTION" default="FCM_NOTIFICATION_HANDLER"/>
-        <preference name="FIREBASE_VERSION" default="18.+"/>
+        <preference name="FIREBASE_VERSION" default="17.+"/>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity android:exported="true" android:name="com.blakgeek.cordova.plugin.firebase.FirebaseMessagingPluginActivity" android:launchMode="singleTop">
