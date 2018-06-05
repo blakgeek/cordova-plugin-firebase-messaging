@@ -36,11 +36,11 @@
 
     <dependency id="cordova-plugin-firebase-core" url="https://github.com/blakgeek/cordova-plugin-firebase-core"/>
 
-    <preference name="HANDLER_ACTION" default="FCM_NOTIFICATION_HANDLER"/>
 
     <!-- ANDROID CONFIGURATION -->
     <platform name="android">
 
+        <preference name="HANDLER_ACTION" default="FCM_NOTIFICATION_HANDLER"/>
         <preference name="FIREBASE_VERSION" default="18.+"/>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
