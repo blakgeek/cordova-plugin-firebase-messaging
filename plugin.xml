@@ -21,7 +21,7 @@
     <name>FirebaseMessagingPlugin</name>
     <description>Adds support for Firebase Cloud Messaging to your Cordova/PhoneGap apps.</description>
     <license>Apache 2.0</license>
-    <keywords>cordova, fcm, push, plugin, cloub, messaging, notification</keywords>
+    <keywords>cordova, fcm, push, plugin, cloud, messaging, notification</keywords>
     <databaseor>Carlos "blakgeek" Lawton</databaseor>
     <repo>https://github.com/blakgeek/cordova-plugin-firebase-messaging.git</repo>
     <issue>https://github.com/blakgeek/cordova-plugin-firebase-messaging/issues</issue>
