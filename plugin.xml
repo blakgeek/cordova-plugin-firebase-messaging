@@ -34,7 +34,7 @@
         <engine name="cordova-android" version="&gt;=4.0.0"/>
     </engines>
 
-    <dependency id="cordova-plugin-firebase-core" url="https://github.com/blakgeek/cordova-plugin-firebase-core"/>
+    <dependency id="cordova-plugin-firebase-core" />
 
 
     <!-- ANDROID CONFIGURATION -->
@@ -68,7 +68,7 @@
         <source-file src="src/android/FirebaseMessagingPluginActivity.java" target-dir="src/com/blakgeek/cordova/plugin/firebase"/>
         <source-file src="src/android/RawRemoteMessage.java" target-dir="src/com/google/firebase/messaging"/>
         <framework src="com.google.firebase:firebase-messaging:$FIREBASE_VERSION"/>
-        <framework src="com.google.code.gson:gson:2+"/>
+        <framework src="com.google.code.gson:gson:2.+"/>
         <framework src="me.leolin:ShortcutBadger:1.1.19@aar"/>
 
 
