@@ -9,7 +9,7 @@
   },
   "contributes": [
     {
-      "name": "Felipe Echanique Torres"
+      "name": "Carlos Lawton"
     }
   ],
   "repository": {
@@ -38,6 +38,6 @@
     "postversion": "node scripts/sync-plugin-version.js; git add plugin.xml; git commit plugin.xml -m \"v${npm_package_version}\""
   },
   "devDependencies": {
-    "libxmljs": "^0.18.4"
+    "libxmljs": "^0.19.5"
   }
 }
