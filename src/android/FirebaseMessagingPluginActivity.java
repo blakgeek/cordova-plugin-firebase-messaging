@@ -55,16 +55,5 @@ public class FirebaseMessagingPluginActivity extends Activity {
         notificationManager.cancelAll();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "==> FCMPluginActivity onStart");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "==> FCMPluginActivity onStop");
-    }
 
 }
