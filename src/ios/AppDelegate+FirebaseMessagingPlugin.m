@@ -47,46 +47,10 @@ static NSDictionary *pendingMessage;
     [self application:application customDidFinishLaunchingWithOptions:launchOptions];
 
     NSLog(@"DidFinishLaunchingWithOptions");
-    // Register for remote notifications
-
-    // iOS 7.1 or earlier
-    if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_7_1) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        UIRemoteNotificationType allNotificationTypes = (UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge);
-        [application registerForRemoteNotificationTypes:allNotificationTypes];
-#pragma clang diagnostic pop
-    } else if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_9_x_Max) {
-        UIUserNotificationType allNotificationTypes =
-                (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
-        UIUserNotificationSettings *settings =
-                [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-    } else {
-        // iOS 10 or later
-#if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-        UNAuthorizationOptions authOptions =
-                UNAuthorizationOptionAlert
-                        | UNAuthorizationOptionSound
-                        | UNAuthorizationOptionBadge;
-        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:authOptions completionHandler:^(BOOL granted, NSError *_Nullable error) {
-        }];
-
-        // For iOS 10 display notification (sent via APNS)
-        [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-        // For iOS 10 data message (sent via FCM)
-        [FIRMessaging messaging].remoteMessageDelegate = self;
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-#endif
-    }
-
-    // [START configure_firebase]
+    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
+    [FIRMessaging messaging].delegate = self;
     [FIRApp configure];
-    // [END configure_firebase]
-    // Add observer for InstanceID token refresh callback.
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:)
-                                                 name:kFIRInstanceIDTokenRefreshNotification object:nil];
+
     return YES;
 }
 
@@ -107,11 +71,11 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     //USER NOT TAPPED NOTIFICATION
     if (application.applicationState == UIApplicationStateActive) {
-        payload[@"$fcmp:foreground"] = @"1";
+        payload[@"$appState"] = @(0);
         [FirebaseMessagingPlugin.instance raiseEvent:@"pushnotification" withPayload:payload];
         // app is in background or in stand by (NOTIFICATION WILL BE TAPPED)
     } else {
-        payload[@"$fcmp:foreground"] = @"0";
+        payload[@"$appState"] = @(1);
         pendingMessage = payload;
     }
 
@@ -119,54 +83,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 }
 // [END receive_message]
 
-// [START refresh_token]
-- (void)tokenRefreshNotification:(NSNotification *)notification {
-    // Note that this callback will be fired everytime a new token is generated, including the first
-    // time. So if you need to retrieve the token as soon as it is available this is where that
-    // should be done.
-    NSString *registrationId = [[FIRInstanceID instanceID] token];
-    if(FirebaseMessagingPlugin.instance) {
-        [FirebaseMessagingPlugin.instance raiseEvent:@"registrationIdChange" withPayload:@{
-                @"registrationId": registrationId
-        }];
-    } else {
-        NSLog(@"waiting") ;
-    }
-    [self connectToFcm];
-}
-// [END refresh_token]
 
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    NSLog(@"app become active");
-    [self connectToFcm];
-}
-
-// [START connect_to_fcm]
-- (void)connectToFcm {
-    // Won't connect since there is no token
-    if (![[FIRInstanceID instanceID] token]) {
-        return;
-    }
-
-    // Disconnect previous FCM connection if it exists.
-    [[FIRMessaging messaging] disconnect];
-
-    [[FIRMessaging messaging] connectWithCompletion:^(NSError * _Nullable error) {
-        if (error != nil) {
-            NSLog(@"Unable to connect to FCM. %@", error);
-        } else {
-            NSLog(@"Connected to FCM.");
-        }
-    }];
-}
-
-// [START disconnect_from_fcm]
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    NSLog(@"app entered background");
-    [[FIRMessaging messaging] disconnect];
-    NSLog(@"Disconnected from FCM");
-}
-// [END disconnect_from_fcm]
 
 + (NSDictionary *)getPendingMessage {
     NSDictionary *message = pendingMessage;
@@ -203,17 +120,19 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     completionHandler();
 }
 
-// Receive data message on iOS 10 devices while app is in the foreground.
-- (void)applicationReceivedRemoteMessage:(FIRMessagingRemoteMessage *)remoteMessage {
+- (void)messaging:(nonnull FIRMessaging *)messaging didReceiveMessage:(nonnull FIRMessagingRemoteMessage *)remoteMessage {
 
     NSMutableDictionary *payload = [remoteMessage.appData mutableCopy];
     payload[@"$appState"] = @(0);
     [FirebaseMessagingPlugin.instance raiseEvent:@"pushnotification" withPayload:payload];
-
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    NSLog(@"APNs token retrieved: %@", deviceToken);
+- (void)messaging:(nonnull FIRMessaging *)messaging didReceiveRegistrationToken:(nonnull NSString *)fcmToken {
+    if (FirebaseMessagingPlugin.instance && fcmToken) {
+        [FirebaseMessagingPlugin.instance raiseEvent:@"registrationIdChange" withPayload:@{
+                @"registrationId": fcmToken
+        }];
+    }
 }
 
 #endif
