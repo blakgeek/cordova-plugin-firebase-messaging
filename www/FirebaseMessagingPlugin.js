@@ -1,13 +1,20 @@
 var exec = require('cordova/exec');
 
 
-function FirebaseMessagingPlugin() {
+function FirebaseMessagingPlugin(options) {
 
     var PLUGIN_NAME = "FirebaseMessagingPlugin";
 
-    // FIRE READY //
-    exec(dispatchEvent, null, PLUGIN_NAME, 'init', []);
+    options = options || {};
 
+    if(options.autoInit !== false) {
+        exec(dispatchEvent, null, PLUGIN_NAME, 'init', []);
+    }
+
+
+    this.init = function() {
+        exec(dispatchEvent, null, PLUGIN_NAME, 'init', []);
+    };
 
     // GET TOKEN //
     this.getToken = function () {
