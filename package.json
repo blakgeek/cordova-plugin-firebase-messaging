@@ -39,5 +39,9 @@
   },
   "devDependencies": {
     "libxmljs": "^0.19.5"
+  },
+  "dependencies": {
+    "semver": "^6.2.0",
+    "shelljs": "^0.8.3"
   }
 }
