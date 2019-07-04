@@ -60,10 +60,16 @@ static FirebaseMessagingPlugin *fcmPluginInstance;
 - (void)getToken:(CDVInvokedUrlCommand *)command {
     NSLog(@"get Token");
     [self.commandDelegate runInBackground:^{
-        NSString *token = [[FIRInstanceID instanceID] token];
-        CDVPluginResult *pluginResult = nil;
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:token];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        [[FIRInstanceID instanceID] instanceIDWithHandler:^(FIRInstanceIDResult * _Nullable result,
+                                                            NSError * _Nullable error) {
+            if (error != nil) {
+                NSLog(@"Error fetching remote instance ID: %@", error);
+            } else {
+                CDVPluginResult *pluginResult = nil;
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:result.token];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }
+        }];
     }];
 }
 
